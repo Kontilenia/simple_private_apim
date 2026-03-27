@@ -1,6 +1,6 @@
 # Azure API Management – Private Endpoint Accelerator
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjason-theodorakopoulos%2Fsimple_private_apim%2Fmain%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FKontilenia%2Fsimple_private_apim%2Fapim_subnet_addition%2Fazuredeploy.json)
 
 This accelerator deploys an **Azure API Management (APIM)** instance (**StandardV2** or **Developer** tier) with **private connectivity** via a private endpoint in an existing virtual network. It creates a **DNS Zone Group** that references an existing private DNS zone — even if that zone lives in a different subscription and resource group (common in CAF hub-spoke topologies).
 
