@@ -163,7 +163,7 @@
       "location": "[parameters('location')]",
       "properties": {
         "subnet": {
-          "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetResourceGroupName')), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('peSubnetName'))]"
+          "id": "[resourceId(subscription().subscriptionId, parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('peSubnetName'))]"
         },
         "privateLinkServiceConnections": [
           {
@@ -190,7 +190,7 @@
           {
             "name": "privatelink-azure-api-net",
             "properties": {
-              "privateDnsZoneId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('privateDnsZoneSubscriptionId'), parameters('privateDnsZoneResourceGroupName')), 'Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
+              "privateDnsZoneId": "[resourceId(parameters('privateDnsZoneSubscriptionId'), parameters('privateDnsZoneResourceGroupName'), 'Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]"
             }
           }
         ]
