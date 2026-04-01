@@ -121,7 +121,7 @@ resource existingApimSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-01-0
 }
 
 // Reference the existing private DNS zone (may be in a different subscription and resource group)
-resource existingPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
+resource existingPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
   name: privateDnsZoneName
   scope: resourceGroup(privateDnsZoneSubscriptionId, privateDnsZoneResourceGroupName)
 }
