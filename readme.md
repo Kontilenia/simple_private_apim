@@ -1,8 +1,8 @@
 # Azure API Management – Private Endpoint Accelerator
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FKontilenia%2Fsimple_private_apim%2Fapim_subnet_addition%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjason-theodorakopoulos%2Fsimple_private_apim%2Fapim_subnet_addition%2Fazuredeploy.json)
 
-This accelerator deploys an **Azure API Management (APIM)** instance (**StandardV2** or **Developer** tier) with **private connectivity** via a private endpoint in an existing virtual network. It creates a **DNS Zone Group** that references an existing private DNS zone — even if that zone lives in a different subscription and resource group (common in CAF hub-spoke topologies).
+This accelerator deploys an **Azure API Management (APIM)** instance (**StandardV2** or **Developer** tier) with **VNet integration** and **private connectivity** via a private endpoint in an existing virtual network. It creates a **DNS Zone Group** that references an existing private DNS zone — even if that zone lives in a different subscription and resource group (common in CAF hub-spoke topologies).
 
 ## Architecture
 
@@ -13,11 +13,11 @@ This accelerator deploys an **Azure API Management (APIM)** instance (**Standard
 │  ┌───────────────────┐    ┌──────────────────────────────┐  │
 │  │  API Management   │◄───│  Private Endpoint            │  │
 │  │  (Stv2/Developer) │    │  (in existing PE subnet)     │  │
-│  │  publicAccess:Off │    └──────────┬───────────────────┘  │
-│  └───────────────────┘               │                      │
-│                             ┌────────┴────────┐             │
-│                             │  Existing VNet  │             │
-│                             │  & PE Subnet    │             │
+│  │  APIM subnet      │    └──────────┬───────────────────┘  │
+│  │  publicAccess:Off │               │                      │
+│  └─────────┬─────────┘      ┌────────┴────────┐             │
+│            │                │  Existing VNet  │             │
+│            └───────────────►│ APIM + PE subnets             │
 │                             └─────────────────┘             │
 └─────────────────────────────────────────────────────────────┘
                                │
@@ -36,7 +36,8 @@ This accelerator deploys an **Azure API Management (APIM)** instance (**Standard
 
 | Prerequisite | Details |
 |---|---|
-| **Virtual Network** | An existing VNet with a subnet designated for private endpoints. |
+| **Virtual Network** | An existing VNet with two existing subnets: one for APIM VNet integration and one for private endpoints. |
+| **APIM Subnet** | An existing subnet dedicated to APIM VNet integration. Make sure it meets the APIM networking requirements for your chosen tier. |
 | **Private DNS Zone** | `privatelink.azure-api.net` must already exist (typically in a central connectivity subscription/resource group). The template creates the DNS Zone Group and A record automatically. |
 | **VNet ↔ DNS Link** | The VNet (or its DNS resolver) must be linked to the private DNS zone so that clients can resolve the APIM private endpoint address. |
 | **Permissions** | Contributor on the APIM resource group; Reader on the VNet resource group; Network Contributor (or Private DNS Zone Contributor) on the DNS zone resource group. |
@@ -53,11 +54,18 @@ This accelerator deploys an **Azure API Management (APIM)** instance (**Standard
 | `skuCapacity` | No | `1` | Number of scale units. Developer tier only supports a capacity of `1`. |
 | `vnetName` | **Yes** | — | Name of the existing VNet. |
 | `vnetResourceGroupName` | No | current RG | Resource group that contains the VNet. |
+| `apimSubnetName` | No | `apim-subnet` | Subnet name used for APIM VNet integration. |
 | `peSubnetName` | No | `pe-subnet` | Subnet name for the private endpoint. |
 | `publicNetworkAccess` | No | `Disabled` | Set to `Enabled` for hybrid (public + private) access. |
 | `privateDnsZoneSubscriptionId` | No | current sub | Subscription ID where the existing private DNS zone resides. |
 | `privateDnsZoneResourceGroupName` | No | current RG | Resource group that contains the existing private DNS zone. |
 | `privateDnsZoneName` | No | `privatelink.azure-api.net` | Name of the existing private DNS zone. |
+
+## Networking model
+
+- `apimSubnetName` is the subnet used by the APIM service itself for VNet integration.
+- `peSubnetName` is the subnet used by the private endpoint.
+- These are different roles and should normally be kept as separate subnets.
 
 ## Deployment behaviour – `publicNetworkAccess`
 

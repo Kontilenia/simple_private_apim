@@ -72,6 +72,9 @@ param vnetResourceGroupName string = resourceGroup().name
 @description('Name of the existing subnet for private endpoints.')
 param peSubnetName string = 'pe-subnet'
 
+@description('Name of the existing subnet for APIM VNet integration.')
+param apimSubnetName string = 'apim-subnet'
+
 @description('Whether to disable public network access to the APIM gateway. Set to Enabled if you need hybrid access.')
 @allowed([
   'Enabled'
@@ -111,6 +114,12 @@ resource existingPeSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-01-01'
   parent: existingVnet
 }
 
+// Reference the existing APIM subnet
+resource existingApimSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-01-01' existing = {
+  name: apimSubnetName
+  parent: existingVnet
+}
+
 // Reference the existing private DNS zone (may be in a different subscription and resource group)
 resource existingPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   name: privateDnsZoneName
@@ -138,6 +147,10 @@ resource apimService 'Microsoft.ApiManagement/service@2024-05-01' = {
     publisherEmail: publisherEmail
     publisherName: publisherName
     publicNetworkAccess: 'Enabled'
+    virtualNetworkConfiguration: {
+      subnetResourceId: existingApimSubnet.id
+    }
+    virtualNetworkType: 'External'
   }
 }
 
@@ -205,6 +218,9 @@ module disablePublicAccess 'modules/apim-public-network-access.bicep' = if (publ
     publisherName: publisherName
     skuName: skuName
     skuCapacity: skuCapacity
+    vnetName: vnetName
+    vnetResourceGroupName: vnetResourceGroupName
+    apimSubnetName: apimSubnetName
     publicNetworkAccess: 'Disabled'
   }
   dependsOn: [

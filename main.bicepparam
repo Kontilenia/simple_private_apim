@@ -23,6 +23,8 @@ param vnetResourceGroupName = 'rg-networking'
 
 param peSubnetName = 'snet-privateendpoints'
 
+param apimSubnetName = 'snet-apim'
+
 param publicNetworkAccess = 'Disabled'
 
 param privateDnsZoneSubscriptionId = '<connectivity-subscription-id>'

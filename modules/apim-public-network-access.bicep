@@ -33,6 +33,15 @@ param skuName string
 @minValue(1)
 param skuCapacity int
 
+@description('Name of the existing Virtual Network.')
+param vnetName string
+
+@description('Resource group name of the existing Virtual Network.')
+param vnetResourceGroupName string
+
+@description('Name of the existing subnet for APIM VNet integration.')
+param apimSubnetName string
+
 @description('Whether to disable public network access to the APIM gateway.')
 @allowed([
   'Enabled'
@@ -54,5 +63,9 @@ resource apimService 'Microsoft.ApiManagement/service@2024-05-01' = {
     publisherEmail: publisherEmail
     publisherName: publisherName
     publicNetworkAccess: publicNetworkAccess
+    virtualNetworkConfiguration: {
+      subnetResourceId: resourceId(subscription().subscriptionId, vnetResourceGroupName, 'Microsoft.Network/virtualNetworks/subnets', vnetName, apimSubnetName)
+    }
+    virtualNetworkType: 'External'
   }
 }

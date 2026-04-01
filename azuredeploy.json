@@ -100,6 +100,13 @@
         "description": "Name of the existing subnet for private endpoints."
       }
     },
+    "apimSubnetName": {
+      "type": "string",
+      "defaultValue": "apim-subnet",
+      "metadata": {
+        "description": "Name of the existing subnet for APIM VNet integration."
+      }
+    },
     "publicNetworkAccess": {
       "type": "string",
       "defaultValue": "Disabled",
@@ -153,7 +160,11 @@
       "properties": {
         "publisherEmail": "[parameters('publisherEmail')]",
         "publisherName": "[parameters('publisherName')]",
-        "publicNetworkAccess": "Enabled"
+        "publicNetworkAccess": "Enabled",
+        "virtualNetworkConfiguration": {
+          "subnetResourceId": "[resourceId(subscription().subscriptionId, parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('apimSubnetName'))]"
+        },
+        "virtualNetworkType": "External"
       }
     },
     {
@@ -228,6 +239,15 @@
           "skuCapacity": {
             "value": "[parameters('skuCapacity')]"
           },
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "vnetResourceGroupName": {
+            "value": "[parameters('vnetResourceGroupName')]"
+          },
+          "apimSubnetName": {
+            "value": "[parameters('apimSubnetName')]"
+          },
           "publicNetworkAccess": {
             "value": "Disabled"
           }
@@ -284,6 +304,24 @@
                 "description": "SKU capacity (scale units) for the APIM instance."
               }
             },
+            "vnetName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of the existing Virtual Network."
+              }
+            },
+            "vnetResourceGroupName": {
+              "type": "string",
+              "metadata": {
+                "description": "Resource group name of the existing Virtual Network."
+              }
+            },
+            "apimSubnetName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of the existing subnet for APIM VNet integration."
+              }
+            },
             "publicNetworkAccess": {
               "type": "string",
               "allowedValues": [
@@ -311,7 +349,11 @@
               "properties": {
                 "publisherEmail": "[parameters('publisherEmail')]",
                 "publisherName": "[parameters('publisherName')]",
-                "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                "virtualNetworkConfiguration": {
+                  "subnetResourceId": "[resourceId(subscription().subscriptionId, parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('apimSubnetName'))]"
+                },
+                "virtualNetworkType": "External"
               }
             }
           ]
